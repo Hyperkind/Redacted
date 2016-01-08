@@ -24,14 +24,26 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 var orig;
 
+
+app.get('/', function (req, res) {
+  res.render('index', {header: 'Please input your message:' , submit: 'Submit', pageTitle: 'Redacted'});
+  console.log('getting index page');
+});
+
+app.post('/', function (req, res) {
+  // orig = req.body.message;
+  var fixed = res.locals.message;
+  res.send(fixed);
+  // console.log('original message: ' + orig);
+  // console.log(sentence);
+});
+
 app.use('/', fixSentence);
 
 function fixSentence (req, res, next) {
   var clean = [];
   var cleanWord;
   var origSplit = req.body.message.split(" ");
-  // origSplit = res.locals.message = origSplit.split(" ");
-  console.log(origSplit);
   for (var i = 0; i < origSplit.length; i++) {
     var currentWord = origSplit[i];
     if (Object.keys(replacements).indexOf(currentWord) > -1) {
@@ -45,19 +57,6 @@ function fixSentence (req, res, next) {
   console.log(cleanSent);
   return next();
 }
-
-app.get('/', function (req, res) {
-  res.render('index', {header: 'Please input your message:' , submit: 'Submit', pageTitle: 'Redacted'});
-  console.log('getting index page');
-});
-
-app.post('/', function (req, res) {
-  orig = req.body.message;
-  // sentence.push(sent);
-  res.send('Sent the message: ' + orig);
-  console.log('original message: ' + orig);
-  // console.log(sentence);
-});
 
 var server = app.listen(8080, function() {
   var port = server.address().port;
